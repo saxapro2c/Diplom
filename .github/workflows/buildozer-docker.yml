@@ -1,4 +1,4 @@
-name: Build Kivy APK with Buildozer Docker (stable)
+name: Build Kivy APK with Buildozer Docker (no buildkit)
 
 on:
   push:
@@ -13,7 +13,10 @@ jobs:
     - name: Checkout source
       uses: actions/checkout@v3
 
-    - name: Run Buildozer Docker container
+    - name: Disable BuildKit (temp fix)
+      run: echo "DOCKER_BUILDKIT=0" >> $GITHUB_ENV
+
+    - name: Run Buildozer in Docker
       uses: addnab/docker-run-action@v3
       with:
         image: kivy/buildozer
@@ -21,7 +24,7 @@ jobs:
         run: |
           buildozer android debug
 
-    - name: Upload APK artifact
+    - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: vyatsu-news-apk
