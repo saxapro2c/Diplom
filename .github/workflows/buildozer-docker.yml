@@ -15,10 +15,21 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Cache Buildozer global directory
-        uses: actions/cache@v4 
+        uses: actions/cache@v4
         with:
           path: .buildozer_global
           key: buildozer-global-${{ hashFiles('**/buildozer.spec') }}
+
+      - name: Prepare Android SDK & cmdline-tools
+        run: |
+          # Распаковать все zip-файлы SDK
+          find ~/.buildozer/android/platform/android-sdk -name '*.zip' \
+            -exec unzip -o -d ~/.buildozer/android/platform/android-sdk {} \;
+          # Скачать и настроить cmdline-tools
+          cd ~/.buildozer/android/platform/android-sdk
+          wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O cmd.zip
+          unzip -o cmd.zip -d cmdline-tools
+          mv cmdline-tools/cmdline-tools cmdline-tools/latest
 
       - name: Build with Buildozer
         uses: ArtemSBulgakov/buildozer-action@v1
@@ -28,9 +39,8 @@ jobs:
           workdir: .
           buildozer_version: stable
           command: |
-            export JAVA_HOME=/usr/lib/jvm/temurin-17-jdk-amd64 &&
+            export JAVA_HOME=/usr/lib/jvm/temurin-17-jdk-amd64
             yes | buildozer android debug
-            
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
