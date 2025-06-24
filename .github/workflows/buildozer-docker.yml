@@ -22,10 +22,10 @@ jobs:
 
       - name: Prepare Android SDK & cmdline-tools
         run: |
-          # Распаковать все zip-файлы SDK
+          # Распаковываем скачанные .zip внутри SDK
           find ~/.buildozer/android/platform/android-sdk -name '*.zip' \
             -exec unzip -o -d ~/.buildozer/android/platform/android-sdk {} \;
-          # Скачать и настроить cmdline-tools
+          # Скачиваем и настраиваем cmdline-tools
           cd ~/.buildozer/android/platform/android-sdk
           wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O cmd.zip
           unzip -o cmd.zip -d cmdline-tools
