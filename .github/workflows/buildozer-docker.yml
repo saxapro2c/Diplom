@@ -1,4 +1,4 @@
-name: Build Kivy APK with Buildozer Docker (no buildkit)
+name: Build Kivy APK (safe docker image)
 
 on:
   push:
@@ -13,13 +13,10 @@ jobs:
     - name: Checkout source
       uses: actions/checkout@v3
 
-    - name: Disable BuildKit (temp fix)
-      run: echo "DOCKER_BUILDKIT=0" >> $GITHUB_ENV
-
-    - name: Run Buildozer in Docker
+    - name: Run Buildozer from stable image
       uses: addnab/docker-run-action@v3
       with:
-        image: kivy/buildozer
+        image: ghcr.io/frostedglass/buildozer:stable
         options: -v ${{ github.workspace }}:/app
         run: |
           buildozer android debug
