@@ -1,4 +1,4 @@
-name: Build Kivy APK (safe docker image)
+name: Build Kivy APK (working Docker image)
 
 on:
   push:
@@ -13,10 +13,10 @@ jobs:
     - name: Checkout source
       uses: actions/checkout@v3
 
-    - name: Run Buildozer from stable image
+    - name: Build APK using caffeineti/buildozer
       uses: addnab/docker-run-action@v3
       with:
-        image: ghcr.io/frostedglass/buildozer:stable
+        image: caffeineti/buildozer
         options: -v ${{ github.workspace }}:/app
         run: |
           buildozer android debug
