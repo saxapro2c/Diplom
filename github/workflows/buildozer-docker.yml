@@ -1,0 +1,28 @@
+name: Build Kivy APK with Buildozer Docker (stable)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout source
+      uses: actions/checkout@v3
+
+    - name: Run Buildozer Docker container
+      uses: addnab/docker-run-action@v3
+      with:
+        image: kivy/buildozer
+        options: -v ${{ github.workspace }}:/app
+        run: |
+          buildozer android debug
+
+    - name: Upload APK artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: vyatsu-news-apk
+        path: bin/*.apk
