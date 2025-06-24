@@ -1,4 +1,4 @@
-name: Build Kivy APK (BuildKit-free)
+name: Build Kivy APK
 
 on:
   push:
@@ -6,28 +6,23 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  build-android:
+    name: Build for Android
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout source
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Disable Docker BuildKit
-      run: |
-        echo "DOCKER_BUILDKIT=0" >> $GITHUB_ENV
-        echo "DOCKER_CLI_EXPERIMENTAL=disabled" >> $GITHUB_ENV
+      - name: Build with Buildozer Action
+        uses: ArtemSBulgakov/buildozer-action@v1
+        id: buildozer
+        with:
+          buildozer_version: stable
+          command: buildozer android debug
 
-    - name: Run Buildozer Docker
-      uses: addnab/docker-run-action@v3
-      with:
-        image: kivy/buildozer
-        options: --disable-content-trust -v ${{ github.workspace }}:/app
-        run: |
-          buildozer android debug
-
-    - name: Upload APK artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: vyatsu-news-apk
-        path: bin/*.apk
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: vyatsu-news-apk
+          path: ${{ steps.buildozer.outputs.filename }}
