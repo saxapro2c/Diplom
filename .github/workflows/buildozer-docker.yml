@@ -1,4 +1,4 @@
-name: Build Kivy APK (working Docker image)
+name: Build Kivy APK (manual SDK install)
 
 on:
   push:
@@ -13,16 +13,13 @@ jobs:
     - name: Checkout source
       uses: actions/checkout@v3
 
-    - name: Build APK using caffeineti/buildozer
+    - name: Disable Docker BuildKit
+      run: echo "DOCKER_BUILDKIT=0" >> $GITHUB_ENV
+
+    - name: Run Buildozer Docker
       uses: addnab/docker-run-action@v3
       with:
-        image: caffeineti/buildozer
+        image: kivy/buildozer
         options: -v ${{ github.workspace }}:/app
         run: |
           buildozer android debug
-
-    - name: Upload APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: vyatsu-news-apk
-        path: bin/*.apk
