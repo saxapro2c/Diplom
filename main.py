@@ -22,7 +22,7 @@ from kivy.uix.image import Image
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.image import Image
 from kivymd.uix.label import MDLabel
-from flask import Flask, request, jsonify
+
 import sqlite3
 import sqlite3
 import os
