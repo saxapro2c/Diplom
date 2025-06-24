@@ -7,12 +7,24 @@ on:
 
 jobs:
   build-android:
-    name: Build for Android
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Set up system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential git python3-dev \
+            libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev \
+            libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev \
+            libgstreamer1.0 libgstreamer-plugins-base1.0 ffmpeg libtool
+
+      - name: Install Buildozer & Cython
+        run: |
+          pip install --upgrade buildozer
+          pip install cython==0.29.26
 
       - name: Cache Buildozer global directory
         uses: actions/cache@v4
@@ -22,16 +34,14 @@ jobs:
 
       - name: Prepare Android SDK & cmdline-tools
         run: |
-          # Распаковываем скачанные .zip внутри SDK
           find ~/.buildozer/android/platform/android-sdk -name '*.zip' \
             -exec unzip -o -d ~/.buildozer/android/platform/android-sdk {} \;
-          # Скачиваем и настраиваем cmdline-tools
           cd ~/.buildozer/android/platform/android-sdk
           wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O cmd.zip
           unzip -o cmd.zip -d cmdline-tools
           mv cmdline-tools/cmdline-tools cmdline-tools/latest
 
-      - name: Build with Buildozer
+      - name: Build APK with Buildozer
         uses: ArtemSBulgakov/buildozer-action@v1
         id: buildozer
         with:
