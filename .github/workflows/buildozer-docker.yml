@@ -14,12 +14,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Build with Buildozer Action
+      - name: Cache Buildozer global directory
+        uses: actions/cache@v2
+        with:
+          path: .buildozer_global
+          key: buildozer-global-${{ hashFiles('**/buildozer.spec') }}
+
+      - name: Build with Buildozer
         uses: ArtemSBulgakov/buildozer-action@v1
         id: buildozer
         with:
+          repository_root: .
+          workdir: .
           buildozer_version: stable
-          command: buildozer android debug
+          command: |
+            export JAVA_HOME=/usr/lib/jvm/temurin-17-jdk-amd64 &&
+            yes | buildozer android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
